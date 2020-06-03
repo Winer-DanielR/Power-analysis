@@ -1,0 +1,26 @@
+
+
+#load libraries and functions
+#!!!!check to make sure all packages are used
+library(methylKit)
+library(ggplot2)
+library(reshape2)
+library(gridExtra)
+library(grid)
+library(emdbook)
+
+
+#using function from Wreczycka et al. 2017 to simulate data
+
+#load function from github
+
+  
+  # parase lines and evealuate in the global environement
+  eval(parse(text = script), envir= .GlobalEnv)
+}
+
+source_https("https://raw.github.com/tonybreyal/Blog-Reference-Functions/master/R/bingSearchXScraper/bingSearchXScraper.R")
+source_https("https://raw.github.com/tonybreyal/Blog-Reference-Functions/master/R/htmlToText/htmlToText.R", unlink.tmp.certs = TRUE)
+
+  
+  
