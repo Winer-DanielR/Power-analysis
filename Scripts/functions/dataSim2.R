@@ -1,75 +1,60 @@
-# This function is from Wreczycka et al. 2017
-# This function is a modification of data2Sim from the methylKit librbary.
-# The original function contains a bug.
+# This function is adapted from Wreczycka et al. 2017
+# Author: Katarzyna Wrecycka
+# Date: 2017
+# Title: dataSim2.R
+# Availablity: https://github.com/BIMSBbioinfo/Strategies_for_analyzing_BS-seq
 
-# functions used to simulate methylation data
+# NOTE: It has been modified from its original form to work in this context
+
+# This function used to simulate methylation data
+
+# It is a modification of data2Sim from the methylKit librbary since the original function contains a bug.
+
 require(emdbook)
 
-#' Simulate DNA methylation data
-#' 
-#' The function simulates DNA methylation data from multiple samples.
-#' See references for detailed explanation on statistics.
+# The function simulates DNA methylation data from multiple samples
+#
+#' See ??? for  explanation on statistics
+#
+# Arguments:
+# replicates = the number of samples that should be simulated.
+# sites = the number of CpG sites per sample
+# site number selected comes from previous studies in guppies
+# treatment = a vector containing treatment information.
+# percentage = the proportion of sites which should be affected by the 
+# treatment, this number was also taken from previous studies
+# effect = effect size/size of effect of the treatment
+# alpha = shape1 parameter for beta distribution (used for 
+# substitution probabilites)
+# beta = shape2 parameter for beta distribution (used for 
+# substitution probabilites)
+# theta = dispersion parameter for beta distribution (used for 
+# substitution probabilites)
+# covariates = a data.frame containing covariates (optional)
+# sample.ids = will be generated automatically from \code{treatment} 
+# assembly = the assembly description (e.g. "hg18") 
+# context = the experimental context of the data, set to "CpG"
+# add.info = if set to TRUE, the output will be a list with the first 
+#                    element being 
+#                    the methylbase object and a vector containing the 
+#                    treatment effect sizes 
+#                    of all sites as the second element.
 
-#' @param replicates  the number of samples that should be simulated.
-#' @param sites       the number of CpG sites per sample.
-#' @param treatment   a vector containing treatment information.
-#' @param percentage  the proportion of sites which should be affected by the 
-#' treatment.
-#' @param effect      a number or vector specifying the effect size of the 
-#' treatment.
-#'                    See `Examples'.
-#' @param alpha       shape1 parameter for beta distribution (used for 
-#' substitution probabilites)
-#' @param beta        shape2 parameter for beta distribution (used for 
-#' substitution probabilites)
-#' @param theta       dispersion parameter for beta distribution (used for 
-#' substitution probabilites)
-#' @param covariates  a data.frame containing covariates (optional)
-#' @param sample.ids  will be generated automatically from \code{treatment}, 
-#'                    but can be 
-#'                    overwritten by a character vector containing sample names.
-#' @param assembly    the assembly description (e.g. "hg18") 
-#' @param context     the experimanteal context of the data (e.g. "CpG")
-#' @param add.info if set to TRUE, the output will be a list with the first 
-#'                    element being 
-#'                    the methylbase object and a vector containing the 
-#'                    treatment effect sizes 
-#'                    of all sites as the second element.
-#'
-#' @examples
-#' 
-#' data(methylKit)
-#' 
-#' # Simualte data for 4 samples with 20000 sites each.
-#' # The methylation in 10% of the sites are elevated by 50%.
-#' my.methylBase=dataSim(replicates=4,sites=2000,treatment=c(1,1,0,0),
-#' percentage=10,effect=25)
-#' 
-#' # Simulate data with variable effect sizes of the treatment
-#' # The methylation in 30% of the sites are elevated by 40%, 50% or 60%.
-#' my.methylBase2=dataSim(replicates=4,sites=2000,treatment=c(1,1,0,0),
-#' percentage=30,effect=10:40)
-#'
-#' @return a methylBase object containing simulated methylation data, 
-#' or a list containing the methylbase object and the indices of all treated
-#'  sites as the second element.
-#' @section Details:
+# Returns: a methylBase object containing simulated methylation data, 
+# or a list containing the methylbase object and the indices of all treated
+# sites as the second element.
+
+# Details:
 #' While the coverage is modeled with a binomial distribution, the function uses 
 #' a Beta distribution to simulate the methylation background across all samples.\cr
 #' The parameters \code{alpha}, \code{beta} and \code{theta} determine this beta
-#'  distribution and 
-#' thereby the methylation values.\cr
+#'  distribution and thereby the methylation values.\cr
 #' The parameters \code{percentage} and \code{effect} determine the proportion 
 #' of sites that are 
 #' affected by the treatment and the strength of this influence, respectively.\cr
 #' The additional information needed for a valid methylBase.obj is generated as 
-#' "dummy
-#' values", but can be overwritten as needed.
-#' 
-#' @export
-#' @docType methods
-#' @aliases dataSim
-#' @rdname dataSim-methods
+#' "dummy values", but can be overwritten as needed.
+
 
 dataSim2 <- function(replicates,sites,treatment,percentage=10,effect=25,
                      alpha=0.4,beta=0.5,theta=10,
