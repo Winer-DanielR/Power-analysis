@@ -1,5 +1,3 @@
-
-
 # load libraries and functions
 # !!!!check to make sure all packages are used
 library("methylKit")
@@ -8,6 +6,12 @@ library(reshape2)
 library(gridExtra)
 library(grid)
 library(emdbook)
+library(tidyverse)
+library(dplyr)
+library(LaCroixColoR)
+
+#set working directory
+setwd("~/Documents/GitHub/Power-analysis")
 
 # using function from Wreczycka et al. 2017 
 # to simulate data (dataSim2 function)
@@ -17,6 +21,8 @@ source("./Scripts/functions/dataSim2.R")
 # to run the methylKit model on simulated data
 source("./Scripts/functions/runModels.R")
 
+# add in functions that I wrote to extract and convert datasets
+source("./Scripts/functions/extractConvert.R")
 ## Running the Simulation##
 
 #set different effect sizes
@@ -24,17 +30,22 @@ effects = c(5, 10, 15, 20, 25)
 cores=20
 #set different replicates
 replicates = c(2,4,6,8)
-#set empty list for results
-models.res=list()
 set.seed(111)
 
+#now put each list into a list for every replicate
+model.res <-setNames(replicate(length(replicates), list()), replicates)
+
+#set an index to keep track of which replicate loop is on
+index=0
 #iterate through each replicate
 for(replicate in replicates){
   # set treatment groups so that 1/2 are 1 (exposed) 
   # and 1/2 are 0 (control)
   treatments = rep(0, replicate/2)
-  treatments - append(treatments, rep(1,replicate/2))
+  treatments = append(treatments, rep(1,replicate/2))
   print(replicate)
+  #add one to the index for every turn of this loop
+  index <- index + 1
   #iterate through each effect size
   for(effect in effects){
     
@@ -43,36 +54,57 @@ for(replicate in replicates){
     
     # Generate simulated data using methylKit library and dataSim2 function
     sim.methylBase = dataSim2(replicates=replicate,
-                              sites=878645,
+                              sites=10000,
                               treatment=treatments,
                               percentage=1,
                               effect=effect,
                               add.info=TRUE)
     
+    
     # Run models using runModels function and return the matrix
     # of true positives (TP), false positives (FP), true negatives (TN)
-    # and false negatives (FN) 
-    models.res[[as.character(effect)]] = run.models(sim.methylBase, cores=cores,
-                                                    difference=5, qvalue=0.01)
+    # and false negatives (FN) along with other evaluations
+    # add the result of the model to the model.res list
+    
+    model.res[[index]][as.character(effect)] <- run.models(sim.methylBase, cores=cores,
+                                                           difference=5, qvalue=0.01)
     
   }}
 
-models.res.diff.orig = lapply(models.res, function(x) x$diff.list)
-models.res.orig = lapply(models.res, function(x) x$rates)
-names(models.res.orig) = effects
-names(models.res.diff.orig) = effects
+#set up separate datasets for each type of evaluation using function
+true_positives <- extract.data(model.res, replicates, effects, "TP")
+sensitivity <- extract.data(model.res, replicates, effects, "sens")
+specificity <- extract.data(model.res, replicates, effects, "spec")
+f_score <- extract.data(model.res, replicates, effects, "f_score")
+accuracy <- extract.data(model.res, replicates, effects, "acc")
 
-#maybe remove this and adjust? 
-models.res=models.res.orig
-models.res.diff=models.res.diff.orig
+#create function for plotting data
+# takes data and y label for inputs
+# gives plots as outputs
+bar.plot <- function(data, ylabel){
+  ggplot(data, aes(replicate, eval,fill=effect)) + geom_bar( 
+                        stat="identity", colour="black", position="dodge") +
+    xlab("Sample Size") + ylab("ylabel") + ylim(0,1) + theme_bw() +
+    theme(legend.position="none", axis.text=element_text(size=11), 
+          axis.title=element_text(size=13) ) + 
+    scale_fill_manual(values = lacroix_palette("PassionFruit")) 
+}
 
-#convert to matrix
-models.res.ma = do.call("rbind", models.res)
-#convert to dataframe 
-models.res.df = data.frame(models.res.ma)
+#create plots for all evaluation parameters
+sensitivity_plot <- bar.plot(sensitivity,"Sensitivity")  
+specificity_plot <- bar.plot(specificity, "Specificity")
+f_score_plot <- bar.plot(f_score, "F-Score")
+accuracy_plot <- bar.plot(accuracy, "Accuracy")
 
-models.res.df = cbind(models.res.df, 
-                      tool=rownames(models.res.ma),
-                      effect=as.factor(as.numeric(sapply(effects, 
-                                                         function(x) 
-                                                           rep(x, nrow(models.res[[1]])  )))))
+# Get legend function (commonly used)
+get_legend <- function(plot){
+  if (!gtable::is.gtable(plot))
+    plot <- ggplotGrob(plot)
+  gtable::gtable_filter(plot, 'guide-box', fixed=TRUE)
+}
+
+#get legend frmo one bar plot, its same for all plots
+legend <- get_legend(sensitivity_plot)
+
+
+  

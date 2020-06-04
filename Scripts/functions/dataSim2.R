@@ -4,7 +4,7 @@
 # Title: dataSim2.R
 # Availablity: https://github.com/BIMSBbioinfo/Strategies_for_analyzing_BS-seq
 
-# NOTE: It has been modified from its original form to work in this context
+# NOTE: It has been slightly modified from its original form to work in this context
 
 # This function used to simulate methylation data
 

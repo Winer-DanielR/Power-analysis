@@ -1,4 +1,4 @@
-# This function is adapted from Wreczycka et al. 2017
+# These functions are adapted from Wreczycka et al. 2017
 # Author: Katarzyna Wrecycka
 # Date: 2017
 # Title: compareUsingSimulated.md
@@ -46,6 +46,8 @@ calc.rates<-function(simOutput, sub.methylDiff){
   ) )
 }
 
+# NOTE: I have heavily edited this function to work in this context 
+
 # Call differentially methylated cytosines using methylKit
 # It calculate true positive positives (TP), false negatives (FN), false positives (FP),
 # accuracy (acc), specificity (spec), sensiticity (sens) and F-score (f_score).
@@ -66,9 +68,9 @@ run.models = function(sim.methylBase, cores=1,
   
   
   ## run methylkit
-  combined = data.frame(test=c("F", "Chisq","F", "Chisq"),
+  combined = data.frame(test=c("Chisq", "F","F", "Chisq"),
                         adjust="qvalue",
-                        overd=c("none","none", "MN", "MN"),
+                        overd=c("MN","none", "MN", "none"),
                         name=c("methylKit.F.qvalue.none",
                                "methylKit.Chisq.qvalue.none",
                                "methylKit.F.qvalue.MN",
@@ -78,11 +80,13 @@ run.models = function(sim.methylBase, cores=1,
   methylKit.list=list()
   for(i in 1:nrow(combined)){
     co = combined[i,]
+    
     methylkit.obj <- calculateDiffMeth(sim.methylBase[[1]], 
                                        overdispersion=co$overd,
                                        adjust = co$adjust,
                                        test=co$test,
                                        mc.cores=cores)
+    
     methylkit.obj.diff = getMethylDiff(methylkit.obj, 
                                        difference=difference,qvalue=qvalue)
     diff.list[[i]] <- methylkit.obj.diff
@@ -91,10 +95,8 @@ run.models = function(sim.methylBase, cores=1,
     
   }
   names(methylKit.list) <- combined$name
-  names(diff.list) <- combined$name
   
-  list(
-    diff.list=diff.list,
-    rates=do.call("rbind",methylKit.list)
-  )
+  return(methylKit.list)
+  
 }
+
