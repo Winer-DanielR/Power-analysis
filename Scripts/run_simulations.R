@@ -1,5 +1,4 @@
 # load libraries and functions
-# !!!!check to make sure all packages are used
 library("methylKit")
 library(ggplot2)
 library(reshape2)
@@ -10,6 +9,7 @@ library(tidyverse)
 library(dplyr)
 library(LaCroixColoR)
 library(lemon)
+
 #set working directory
 setwd("~/Documents/GitHub/Power-analysis")
 
@@ -96,8 +96,8 @@ specificity_bar_plot <- bar.plot(specificity, "Specificity")
 f_score_bar_plot <- bar.plot(f_score, "F-Score")
 accuracy_bar_plot <- bar.plot(accuracy, "Accuracy")
 
-
+#arrange plots in a grid with a shared legend
 grid_arrange_shared_legend(sensitivity_bar_plot, specificity_bar_plot, f_score_bar_plot, 
-                           accuracy_bar_plot, ncol=2, nrow=2)
+   accuracy_bar_plot, ncol=2, nrow=2)
 
 

@@ -1,3 +1,4 @@
+# I wrote all of these functions
 # Function converts data from list of lists to data frame
 # and then converts to long form for graphing
 # takes as input:
