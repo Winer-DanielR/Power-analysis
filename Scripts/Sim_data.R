@@ -9,7 +9,7 @@ library(emdbook)
 library(tidyverse)
 library(dplyr)
 library(LaCroixColoR)
-
+library(lemon)
 #set working directory
 setwd("~/Documents/GitHub/Power-analysis")
 
@@ -54,9 +54,9 @@ for(replicate in replicates){
     
     # Generate simulated data using methylKit library and dataSim2 function
     sim.methylBase = dataSim2(replicates=replicate,
-                              sites=10000,
+                              sites=50000,
                               treatment=treatments,
-                              percentage=1,
+                              percentage=5,
                               effect=effect,
                               add.info=TRUE)
     
@@ -84,27 +84,20 @@ accuracy <- extract.data(model.res, replicates, effects, "acc")
 bar.plot <- function(data, ylabel){
   ggplot(data, aes(replicate, eval,fill=effect)) + geom_bar( 
                         stat="identity", colour="black", position="dodge") +
-    xlab("Sample Size") + ylab("ylabel") + ylim(0,1) + theme_bw() +
-    theme(legend.position="none", axis.text=element_text(size=11), 
-          axis.title=element_text(size=13) ) + 
-    scale_fill_manual(values = lacroix_palette("PassionFruit")) 
+    xlab("Sample Size") + ylab(ylabel) + ylim(0,1) + theme_bw() +
+    theme(axis.text=element_text(size=11), legend.position="none", 
+          axis.title=element_text(size=13)) + 
+    scale_fill_manual(values = lacroix_palette("PassionFruit"))  + labs(fill="Effect Size")
 }
 
 #create plots for all evaluation parameters
-sensitivity_plot <- bar.plot(sensitivity,"Sensitivity")  
-specificity_plot <- bar.plot(specificity, "Specificity")
-f_score_plot <- bar.plot(f_score, "F-Score")
-accuracy_plot <- bar.plot(accuracy, "Accuracy")
-
-# Get legend function (commonly used)
-get_legend <- function(plot){
-  if (!gtable::is.gtable(plot))
-    plot <- ggplotGrob(plot)
-  gtable::gtable_filter(plot, 'guide-box', fixed=TRUE)
-}
-
-#get legend frmo one bar plot, its same for all plots
-legend <- get_legend(sensitivity_plot)
+sensitivity_bar_plot <- bar.plot(sensitivity,"Sensitivity")  
+specificity_bar_plot <- bar.plot(specificity, "Specificity")
+f_score_bar_plot <- bar.plot(f_score, "F-Score")
+accuracy_bar_plot <- bar.plot(accuracy, "Accuracy")
 
 
-  
+grid_arrange_shared_legend(sensitivity_bar_plot, specificity_bar_plot, f_score_bar_plot, 
+                           accuracy_bar_plot, ncol=2, nrow=2)
+
+
