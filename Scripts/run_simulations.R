@@ -2,8 +2,6 @@
 library("methylKit")
 library(ggplot2)
 library(reshape2)
-library(gridExtra)
-library(grid)
 library(emdbook)
 library(tidyverse)
 library(dplyr)
@@ -44,8 +42,9 @@ for(replicate in replicates){
   treatments = rep(0, replicate/2)
   treatments = append(treatments, rep(1,replicate/2))
   print(replicate)
-  #add one to the index for every turn of this loop
+  # add one to the index for every turn of this loop
   index <- index + 1
+  
   #iterate through each effect size
   for(effect in effects){
     
@@ -72,11 +71,11 @@ for(replicate in replicates){
   }}
 
 #set up separate datasets for each type of evaluation using function
-true_positives <- extract.data(model.res, replicates, effects, "TP")
 sensitivity <- extract.data(model.res, replicates, effects, "sens")
 specificity <- extract.data(model.res, replicates, effects, "spec")
 f_score <- extract.data(model.res, replicates, effects, "f_score")
 accuracy <- extract.data(model.res, replicates, effects, "acc")
+false_negatives <- extract.data(model.res, replicates, effects, "FN")
 
 #create function for plotting data
 # takes data and y label for inputs
