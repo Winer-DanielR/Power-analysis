@@ -75,7 +75,6 @@ sensitivity <- extract.data(model.res, replicates, effects, "sens")
 specificity <- extract.data(model.res, replicates, effects, "spec")
 f_score <- extract.data(model.res, replicates, effects, "f_score")
 accuracy <- extract.data(model.res, replicates, effects, "acc")
-false_negatives <- extract.data(model.res, replicates, effects, "FN")
 
 #create function for plotting data
 # takes data and y label for inputs
