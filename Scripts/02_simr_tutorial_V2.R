@@ -25,6 +25,7 @@ fixed <- c(5, 0, 0.1, 0.2, 1, 0.9)
 
 #Random intercepts for participants clustered by class
 rand <- list(0.5, 0.1)
+rand
 
 #Residual variance
 res <- 2
