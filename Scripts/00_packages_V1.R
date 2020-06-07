@@ -6,5 +6,8 @@
 install.packages("simr")
 install.packages("lme4")
 
-library(simr)
+
 library(lme4)
+library(simr)
+library(readr)
+library(ggplot2)
