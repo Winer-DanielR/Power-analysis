@@ -68,13 +68,10 @@ run.models = function(sim.methylBase, cores=1,
   
   
   ## run methylkit
-  combined = data.frame(test=c("Chisq", "F","F", "Chisq"),
+  combined = data.frame(test=c("Chisq"),
                         adjust="qvalue",
-                        overd=c("MN","none", "MN", "none"),
-                        name=c("methylKit.F.qvalue.none",
-                               "methylKit.Chisq.qvalue.none",
-                               "methylKit.F.qvalue.MN",
-                               "methylKit.Chisq.qvalue.MN"), 
+                        overd=c("MN"),
+                        name=c("methylKit.Chisq.qvalue.MN"), 
                         stringsAsFactors = FALSE)
   diff.list = list()
   methylKit.list=list()
