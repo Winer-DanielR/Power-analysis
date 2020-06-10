@@ -47,12 +47,13 @@ cor(dataset[,4:8], dataset3[,16:17])
 ###########DEFINING THE MODEL#############
 
 #model 1 is using PC scores for morphology
-model1 <- lmer(PC1 ~ treatment + (1|parcel) + (1|mericarp), data=dataset2) #Morphology PCA
+model1 <- lmer(PC1 ~ treatment + lower_spine + (1|parcel) + (1|mericarp), data = dataset2) #Morphology PCA
 summary(model1)
+drop1(model1)
 
-
-model2 <- lmer(PC1 ~ treatment + (1|parcel) + (1|mericarp), data=dataset3) #Hardness PCA
+model2 <- lmer(PC1 ~ treatment + lower_spine + (1|parcel) + (1|mericarp), data=dataset3) #Hardness PCA
 summary(model2)
+drop1(model2)
 
 ## Checking assumptions model 1
 plot(model1)
@@ -80,8 +81,6 @@ par(opar)
 
 #Check fixed effect intercepts. I am interested in small mericarps
 fixef(model1)["treatmenttwo spines"] <- 0.05
-
-
 fixef(model2)["treatmenttwo spines"] <- 0.05
 
 #Power analysis for both models
